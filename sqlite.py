@@ -96,6 +96,22 @@ def insert_employees_table(cur, entries_sql):
         print("Entries are not of proper format")
 
 
+# Selection examples
+def get_employees_by_name(lastname):
+    c.execute("SELECT * FROM employees WHERE last = lastname;")
+    print(c.fetchall())
+
+def get_employees_by_department(dep):
+    if dep.isdigit():
+        c.execute("SELECT * FROM employees WHERE department_id = dep;")
+        print(c.fetchall())
+    else:
+        c.execute("SELECT * FROM departments WHERE department_name = dep;")
+        id = c.fetchone()[0]
+        c.execute("SELECT * FROM employees WHERE department_id = " +
+                   str(id) + ";")
+        print(c.fetchall())
+
 
 
 def main():
@@ -121,17 +137,33 @@ def main():
     conn, c = create_conn_and_cur(database)
 
     # create tables
-    if conn is not None:
-        # create departments table
-        create_table(c, sql_create_departments_table)
-        # create employee table
-        create_table(c, sql_create_employees_table)
-    else:
-        print("Error! Failure to create database connection")
+    # if conn is not None:
+    #     # create departments table
+    #     create_table(c, sql_create_departments_table)
+    #     # create employee table
+    #     create_table(c, sql_create_employees_table)
+    # else:
+    #     print("Error! Failure to create database connection")
+    #
+    # # insert initial entries
+    # insert_departments_table(c, department_names)
+    # insert_employees_table(c, current_staff)
 
-    # insert initial entries
-    insert_departments_table(c, department_names)
-    insert_employees_table(c, current_staff)
+    # Manual individual insertion of employees
+    # r_input = ''
+    # while True:
+    #     r_input = Employee.prompt_to_create()
+    #     try:
+    #         insert_employees_table(c, (r_input.first,
+    #                                    r_input.last,
+    #                                    r_input.department_id,
+    #                                    r_input.manager_id,
+    #                                    r_input.pay))
+    #     except:
+    #         if r_input == 'q':
+    #             break
+    #         print('\nError! Could not format for database entry.')
+    #         continue
 
     conn.commit()
     conn.close()
